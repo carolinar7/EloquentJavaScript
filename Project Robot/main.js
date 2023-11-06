@@ -45,17 +45,19 @@ var VillageState = class VillageState {
   }
 }
 
-function runRobot(state, robot, memory) {
-  for (let turn = 0;; turn++) {
+function runRobot(state, robot, memory, log = false) {
+  let turn;
+  for (turn = 0;; turn++) {
     if (state.parcels.length == 0) {
-      console.log(`Done in ${turn} turns`);
+      log && console.log(`Done in ${turn} turns`);
       break;
     }
     let action = robot(state, memory);
     state = state.move(action.direction);
     memory = action.memory;
-    console.log(`Moved to ${action.direction}`);
+    log && console.log(`Moved to ${action.direction}`);
   }
+  return turn
 }
 
 function randomPick(array) {
@@ -118,3 +120,25 @@ function goalOrientedRobot({place, parcels}, route) {
   }
   return {direction: route[0], memory: route.slice(1)};
 }
+
+// Measuring a robot. There are three kinds of robots.
+// 1. Random robot
+// 2. Route robot
+// 3. Goal oriented robot
+
+function compareRobots(robot1, memory1, robot2, memory2, log = false) {
+  const RUNS = 100
+  let robot1TotalSteps = 0
+  let robot2TotalSteps = 0
+  for (let i = 0; i < RUNS; i++) {
+    const villageState = VillageState.random();
+    robot1TotalSteps += runRobot(villageState, robot1, memory1, log)
+    robot2TotalSteps += runRobot(villageState, robot2, memory2, log)
+  }
+  console.log(`Average steps for ${robot1.name} is ${robot1TotalSteps / RUNS}`)
+  console.log(`Average steps for ${robot2.name} is ${robot2TotalSteps / RUNS}\n`)
+}
+
+compareRobots(randomRobot, [], routeRobot, [])
+compareRobots(randomRobot, [], goalOrientedRobot, [])
+compareRobots(routeRobot, [], goalOrientedRobot, [])
