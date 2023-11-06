@@ -142,3 +142,36 @@ function compareRobots(robot1, memory1, robot2, memory2, log = false) {
 compareRobots(randomRobot, [], routeRobot, [])
 compareRobots(randomRobot, [], goalOrientedRobot, [])
 compareRobots(routeRobot, [], goalOrientedRobot, [])
+
+function nearestParcelPickup({place, parcels}) {
+  let route = findRoute(roadGraph, place, parcels[0].place)
+  for (let i = 1; i < parcels.length; i++) {
+    possibleRoute = findRoute(roadGraph, place, parcels[i].place)
+    route = (possibleRoute.length < route.length) ? possibleRoute : route
+  }
+  return route
+}
+
+function nearestParcelDelivery({place, parcels}) {
+  let route = findRoute(roadGraph, place, parcels[0].address)
+  for (let i = 1; i < parcels.length; i++) {
+    possibleRoute = findRoute(roadGraph, place, parcels[i].address)
+    route = (possibleRoute.length < route.length) ? possibleRoute : route
+  }
+  return route
+}
+
+function efficientRobot({place, parcels}, route) {
+  const obtainedParcels = parcels.filter((parcel) => parcel.place === place)
+  const needToPickupParcels = parcels.filter((parcel) => parcel.place !== place)
+
+  if (obtainedParcels.length > 0)
+    route = nearestParcelDelivery({place, parcels: obtainedParcels})
+
+  if (needToPickupParcels.length > 0)
+    route = nearestParcelPickup({place, parcels: needToPickupParcels})
+
+  return {direction: route[0], memory: route.slice(1)};
+}
+
+compareRobots(goalOrientedRobot, [], efficientRobot, [])
