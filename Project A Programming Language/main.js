@@ -195,3 +195,45 @@ do(define(sum, fun(array,
         sum))),
    print(sum(array(1, 2, 3))))
 `);
+
+// Set binding in global if set, and local if not set
+
+// My work:
+// specialForms.set = (args, scope) => {
+//   console.log(Object.getPrototypeOf(scope))
+//   console.log(scope, scope[args[0].name])
+//   if (scope[args[0].name]) {
+//     console.log(scope)
+//   	scope[args[0].name] = evaluate(args[1], scope)
+//     console.log(scope)
+//   } else {
+//   	throw new ReferenceError("Binding is not defined")
+//   }
+// };
+
+// Correct solution
+specialForms.set = (args, env) => {
+  if (args.length != 2 || args[0].type != "word") {
+    throw new SyntaxError("Bad use of set");
+  }
+  let varName = args[0].name;
+  let value = evaluate(args[1], env);
+
+  for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
+    if (Object.prototype.hasOwnProperty.call(scope, varName)) {
+      scope[varName] = value;
+      return value;
+    }
+  }
+  throw new ReferenceError(`Setting undefined variable ${varName}`);
+};
+
+run(`
+do(define(x, 4),
+   define(setx, fun(val, set(x, val))),
+   setx(50),
+   print(x))
+`);
+// → 50
+run(`set(quux, true)`);
+// → Some kind of ReferenceError
