@@ -17,7 +17,17 @@ function parseExpression(program) {
 function skipSpace(string) {
   let first = string.search(/\S/);
   if (first == -1) return "";
-  return string.slice(first);
+  let newStr = string.slice(first);
+  if (string.charAt(first) == '#') {
+    let second = newStr.search(/\n/)
+    newStr = skipSpace(newStr.slice(second + 1))
+  }
+  return newStr
+}
+
+function betterSkipSpace(string) {
+  let skippable = string.match(/^(\s|#.*)*/);
+  return string.slice(skippable[0].length);
 }
 
 function parseApply(expr, program) {
