@@ -1,0 +1,32 @@
+<script>
+  let canPrintToScreen = true;
+  window.addEventListener('mousemove', (event) => {
+    if (!canPrintToScreen) {
+      return;
+    }
+
+    canPrintToScreen = false;
+
+    const pNode = document.createElement("p");
+    const textNode = document.createTextNode('⭐');
+    pNode.appendChild(textNode);
+    pNode.style.position = 'absolute';
+    pNode.style.fontSize = Math.max(10, Math.random() * 20) + 'px';
+    pNode.style.top = event.clientY - 40 + Math.random() * 20 + 'px';
+    pNode.style.left = event.clientX - 10 + Math.random() * 20 + 'px';
+    pNode.style.cursor = 'default'
+    document.body.appendChild(pNode)
+
+    const negativeNum = () => {
+      if (Math.random() < .5) return -1;
+      return 1;
+    }
+
+    setTimeout(() => {
+      canPrintToScreen = true;
+    }, 25)
+    setTimeout(() => {
+      pNode.remove()
+    }, 400 + negativeNum() * Math.random() * 100 )
+  })
+</script>
