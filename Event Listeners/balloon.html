@@ -1,0 +1,24 @@
+<div style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center;">
+  <p style="font-size: 200px;">🎈</p>
+</div>
+<script>
+  balloon = document.querySelector('p');
+
+  function increaseOrDecreaseBalloonSize(event) {
+    let size = parseInt(balloon.style.fontSize.slice(0, -2))
+    let newSize = size;
+    if (event.key === 'ArrowUp') {
+      newSize = size + 5;
+    } else if (event.key === "ArrowDown") {
+      if (size <= 5) return;
+      newSize = size - 5;
+    }
+    balloon.style.fontSize = newSize + 'px';
+    if (newSize >= 500) {
+      balloon.innerHTML = '💥';
+      window.removeEventListener('keydown', increaseOrDecreaseBalloonSize)
+    }
+  }
+
+  window.addEventListener('keydown', increaseOrDecreaseBalloonSize)
+</script>
