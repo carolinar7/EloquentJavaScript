@@ -1,0 +1,26 @@
+<p style="display: flex; justify-content: center; align-items: center; margin-top: 300px; margin-left: 200px">
+  <img id='cat' src="https://png.pngtree.com/png-clipart/20230308/ourmid/pngtree-cute-cat-sticker-cartoon-kitten-kitty-png-image_6635286.png" style="position: relative">
+  <img id='hat' style="width: 225px; position: relative"src="https://spaces-cdn.clipsafari.com/j7ub864eqetjxa5gxt5qmc0b8zt3">
+</p>
+<script>
+  let cat = document.querySelector("#cat");
+  let hat = document.querySelector("#hat");
+  let angle = Math.PI / 2;
+  let angle2 = Math.PI / 2;
+  const oscillate = (time, lastTime) => {
+    
+  }
+
+  function animate(time, lastTime) {
+    if (lastTime != null) {
+      angle += (time - lastTime) * 0.001;
+      angle2 += (-time + lastTime) * 0.001;
+    }
+    cat.style.top = (Math.sin(angle) * 200) + "px";
+    cat.style.left = (Math.cos(angle) * 300) + "px";
+    hat.style.top = (Math.sin(angle2) * 200) - 125 + "px";
+    hat.style.left = (Math.cos(angle2) * 300) - 350 +  "px";
+    requestAnimationFrame(newTime => animate(newTime, time));
+  }
+  requestAnimationFrame(animate);
+</script>
