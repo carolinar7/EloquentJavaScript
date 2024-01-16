@@ -328,22 +328,32 @@ function runAnimation(frameFunc) {
 }
 
 function runLevel(level, Display) {
+  let paused = false;
   let display = new Display(document.body, level);
   let state = State.start(level);
   let ending = 1;
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      paused = !paused
+    }
+  })
   return new Promise(resolve => {
     runAnimation(time => {
-      state = state.update(time, arrowKeys);
-      display.syncState(state);
-      if (state.status == "playing") {
-        return true;
-      } else if (ending > 0) {
-        ending -= time;
+      if (paused) {
         return true;
       } else {
-        display.clear();
-        resolve(state.status);
-        return false;
+        state = state.update(time, arrowKeys);
+        display.syncState(state);
+        if (state.status == "playing") {
+          return true;
+        } else if (ending > 0) {
+          ending -= time;
+          return true;
+        } else {
+          display.clear();
+          resolve(state.status);
+          return false;
+        }
       }
     });
   });
@@ -363,7 +373,8 @@ async function runGame(plans, Display) {
   const heartsEl = document.querySelector('#hearts')
   heartsEl.innerHTML = getHearts(3);
   let hearts = 3
-  for (let level = 0; level < plans.length;) {
+  let level = 0
+  for (;level < plans.length;) {
     if (hearts === 0) {
       const levelTextEl = document.querySelector('#levelText')
       levelTextEl.remove()
@@ -380,5 +391,11 @@ async function runGame(plans, Display) {
       hearts--;
       heartsEl.innerHTML = getHearts(hearts)
     }
+  }
+  if (level === plans.length) {
+    const levelTextEl = document.querySelector('#levelText')
+    heartsEl.remove()
+    levelTextEl.remove()
+    levelEl.innerHTML = 'You won!'
   }
 }
