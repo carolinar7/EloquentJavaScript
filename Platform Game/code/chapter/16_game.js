@@ -112,10 +112,53 @@ var Coin = class Coin {
 
 Coin.prototype.size = new Vec(0.6, 0.6);
 
+class Monster {
+  constructor(pos, speed) {
+    this.pos = pos;
+    this.speed = speed;
+  }
+
+  get type() { return "monster"; }
+
+  static create(pos) {
+    return new Monster(pos.plus(new Vec(0, -1)), new Vec(4, 0));
+  }
+
+  update(time, state) {
+    let player = state.player
+    const directionOfPlayer = player.pos.x - this.pos.x <= 0 ? -1 : 1
+    let newPos = this.pos.plus(this.speed.times(directionOfPlayer * time));
+    if (!state.level.touches(newPos, this.size, "wall")) {
+      return new Monster(newPos, this.speed);
+    } else {
+      return new Monster(this.pos, this.speed)
+    }
+  }
+
+  killed(player) {
+    // Make sure height of player is greater than monster
+    // and a kill only counts if you hit the top 1/8 of the
+    // monster.
+    return player.pos.y < this.pos.y &&
+    player.pos.y + player.size.y < this.pos.y + this.size.y / 8;
+  }
+
+  collide(state) {
+    if (this.killed(state.player)) {
+      let filtered = state.actors.filter(a => a != this);
+      return new State(state.level, filtered, state.status);
+    }
+    return new State(state.level, state.actors, "lost");
+  }
+}
+
+Monster.prototype.size = new Vec(1.2, 2);
+
 var levelChars = {
   ".": "empty", "#": "wall", "+": "lava",
   "@": Player, "o": Coin,
-  "=": Lava, "|": Lava, "v": Lava
+  "=": Lava, "|": Lava, "v": Lava,
+  "M": Monster
 };
 
 var simpleLevel = new Level(simpleLevelPlan);
