@@ -1,0 +1,71 @@
+<!-- Learning Vim Keybinds as I write this -->
+<canvas></canvas>
+<script>
+  cx = document.querySelector("canvas").getContext("2d");
+  cx.canvas.width = 1000
+  cx.canvas.height = 1000
+
+  // Trapezoid
+  cx.beginPath();
+  cx.moveTo(40, 20);
+  cx.lineTo(20, 50);
+  cx.lineTo(80, 50);
+  cx.lineTo(60, 20);
+  cx.closePath();
+  cx.stroke();
+
+  // Diamond
+  cx.beginPath();
+  cx.moveTo(120, 20);
+  cx.lineTo(100, 40);
+  cx.lineTo(120, 60);
+  cx.lineTo(140, 40);
+  cx.fillStyle = 'red';
+  cx.strokeStyle = 'red';
+  cx.fill();
+  cx.closePath();
+  cx.stroke();
+
+  // Zig Zag
+  cx.beginPath();
+  cx.strokeStyle = 'black';
+  let currX = 160;
+  cx.moveTo(currX, 20);
+  let moveY = 5;
+  let moveX = 40;
+  let dir = 1;
+  for (let i = 1; i < 13; i++) {
+    currX = moveX * dir + currX;
+    cx.lineTo(currX, 20 + moveY * i);
+    dir *= -1;
+  }
+  cx.stroke();
+
+  // Swirl
+  cx.beginPath()
+  currX = 260;
+  currY = 50;
+  cx.moveTo(currX, currY);
+  for (let i = 0; i < 100; i++) {
+    cx.lineTo(currX, currY);
+    currX += Math.cos(i / 4) * i / 10;
+    currY += Math.sin(i / 4) * i / 10;
+  }
+  cx.stroke();
+
+  // Yellow Star
+  cx.beginPath();
+  currX = 340;
+  currY = 45;
+  cx.moveTo(currX, currY);
+  let inc = 2 * Math.PI / 8;
+  let angle = 0;
+  cx.moveTo(340 + 30, currY);
+  for (let i = 0; i < 8; i++) {
+    angle += inc;
+    cx.quadraticCurveTo(currX, currY, currX + Math.cos(angle) * 30, currY + Math.sin(angle) * 30);
+  }
+  cx.fillStyle = 'orange'
+  cx.fill()
+  cx.stroke();
+</script>
